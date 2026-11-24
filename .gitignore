@@ -1,0 +1,20 @@
+# Local practice VM (not part of the installable flake)
+floor-vm.qcow2
+floor-vm-serial.log
+vm-configuration.nix
+result
+result-*
+
+# Nix / editor noise
+.direnv/
+.pre-commit-config.yaml
+*.qcow2
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+*~
+*.swp
+
+# Do not commit a lockfile for this repo (inputs stay floating on purpose)
+flake.lock
