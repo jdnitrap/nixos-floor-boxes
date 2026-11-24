@@ -1,7 +1,9 @@
 # Firefox box. Window opens through the screen door (/run/floor-wayland).
+# Self-contained (no imports): nixos-container evaluates this as a single file.
 { pkgs, lib, ... }:
 {
-  imports = [ ./wayland-app.nix ];
+  services.nscd.enable = false;
+  system.nssModules = lib.mkForce [ ];
 
   environment.systemPackages = [ pkgs.firefox pkgs.hicolor-icon-theme ];
 

@@ -1,7 +1,9 @@
 # Sound box. Owns the speakers. No screen window — other boxes use the sound door.
+# Self-contained (no imports): nixos-container evaluates this as a single file.
 { pkgs, lib, ... }:
 {
-  imports = [ ./common-nspawn.nix ];
+  services.nscd.enable = false;
+  system.nssModules = lib.mkForce [ ];
 
   services.pipewire = {
     enable = true;
@@ -9,7 +11,6 @@
     alsa.enable = true;
   };
 
-  # Listen so other boxes can reach pulse through the sound door (TCP 4713).
   services.pipewire.extraConfig.pipewire-pulse."50-floor-network" = {
     "pulse.properties" = {
       "server.address" = [

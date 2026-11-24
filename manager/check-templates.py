@@ -35,19 +35,19 @@ def main():
                 errors.append(f"{name}: template missing WAYLAND_DISPLAY for a window box")
             if "/run/floor-wayland" not in text:
                 errors.append(f"{name}: template missing XDG_RUNTIME_DIR=/run/floor-wayland")
-            if "common-nspawn.nix" not in text and "wayland-app.nix" not in text:
-                if "system.nssModules" not in text:
-                    errors.append(f"{name}: template should import wayland-app.nix or set nssModules")
+            if "system.nssModules" not in text:
+                errors.append(f"{name}: template must set system.nssModules (nscd off) for nixos-container")
         else:
             if "screen" in box.get("doors", []):
                 errors.append(f"{name}: has screen door but window=false")
             if service.startswith("floor-"):
                 errors.append(f"{name}: background box should not use a floor-* window service name")
 
-        # imports for shared fragments must exist
-        for fragment in ("common-nspawn.nix", "wayland-app.nix"):
-            if fragment in text and not (TEMPLATES / fragment).exists():
-                errors.append(f"{name}: imports {fragment} but file is missing")
+        if "imports" in text and "./" in text:
+            errors.append(
+                f"{name}: avoid relative imports in templates; "
+                "nixos-container evaluates a single file and sibling imports break under /etc"
+            )
 
     if errors:
         print("Template check failed:")

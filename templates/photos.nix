@@ -1,5 +1,5 @@
 # Photos box. Window opens through the screen door (/run/floor-wayland).
-# Always opens at least one image so the viewer does not exit on an empty folder.
+# Self-contained (no imports): nixos-container evaluates this as a single file.
 { pkgs, lib, ... }:
 let
   welcome = pkgs.runCommand "photos-welcome" { } ''
@@ -10,7 +10,8 @@ let
   '';
 in
 {
-  imports = [ ./wayland-app.nix ];
+  services.nscd.enable = false;
+  system.nssModules = lib.mkForce [ ];
 
   environment.systemPackages = [ pkgs.imv ];
 

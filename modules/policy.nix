@@ -40,15 +40,12 @@ in
     message = "Box ${name}: window boxes need a screen door and a floor-* service; background boxes must not list screen.";
   }) boxes;
 
+  # Whole templates/ directory so files stay siblings if a template ever imports another.
+  # Each template is also self-contained (no imports) for nixos-container --config-file.
   environment.etc = {
     "floor-boxes/doors.json".source = policyFile;
-    # Shared fragments imported by the per-box templates.
-    "floor-boxes/templates/common-nspawn.nix".source = ../templates/common-nspawn.nix;
-    "floor-boxes/templates/wayland-app.nix".source = ../templates/wayland-app.nix;
-  } // lib.mapAttrs' (name: box: {
-    name = "floor-boxes/templates/${box.template}";
-    value = { source = ../templates + "/${box.template}"; };
-  }) boxes;
+    "floor-boxes/templates".source = ../templates;
+  };
 
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
 
