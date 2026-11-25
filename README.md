@@ -1,13 +1,15 @@
 # nixos-floor-boxes
 
-A small NixOS **floor** plus disposable **boxes** (jobs) connected by **doors**.
+**Work in progress.** The pieces below boot in a test virtual machine, and bugs remain. Stop and start, sound, and the network door are still being worked out. Do not treat this as a finished install.
 
-- The **floor** boots, logs you in, and reaches the network.
-- The **screen** box stays in the NixOS config (rebuild to change it).
-- Other boxes are **templates**. Starting one does **not** rebuild NixOS.
-- Changing doors or the screen **does** rebuild NixOS.
+This project is a small NixOS computer, the **floor**, that runs separate jobs called **boxes**. Each box is its own NixOS container. A **door** is the only permission for one box to use something another box owns.
 
-This is a flake. Install it on any NixOS machine you choose.
+- The **screen** box owns the display and shows the Boxes window. It starts with the floor.
+- **Firefox** is a window box. It does not start until you press Start. It may use the screen, the speakers, and the network.
+- **Sound** owns the speakers and has no window.
+- **Network** owns the way out. It resolves names. Start it before Firefox if you want a search to work.
+
+The boxes are built on the host when the floor system is built. The test VM only starts those finished systems. Starting or stopping a box does not rebuild NixOS. Changing a door does.
 
 ## Install with a flake
 
@@ -40,6 +42,17 @@ Then:
 sudo nixos-rebuild switch --flake .#floor
 ```
 
+## Look at a test VM
+
+Build and start a virtual machine without installing it on the computer you are using. The VM gets 20 GB of RAM.
+
+```bash
+./rebuild-vm.sh
+./run-vm.sh
+```
+
+While it runs, `vm-output/console.log` is the serial console. About 15 seconds after boot, and every 30 seconds after that, the guest rewrites `vm-output/floor-vm-report.txt`. Those files are for reading problems. They are not part of a real floor install.
+
 ### Modules
 
 | Module | What it does |
@@ -52,7 +65,8 @@ sudo nixos-rebuild switch --flake .#floor
 
 - `modules/` — floor, screen, door, policy
 - `share/doors.json` — which boxes may use which doors
-- `templates/` — one NixOS config per job (firefox, files, mail, photos, sound, print)
+- `templates/` — one NixOS config per box (firefox, sound, network, and older unused jobs)
+- `rebuild-vm.sh` and `run-vm.sh` — build and start the test VM
 - `manager/` — Boxes window (`floorbox.py`), door listener, spin script
 - `hardware-configuration.nix` — placeholder; the installer writes the real one
 
@@ -60,8 +74,9 @@ sudo nixos-rebuild switch --flake .#floor
 
 | Box | Kind | Behavior |
 |-----|------|----------|
-| files, firefox, mail, photos | window | Opens a GUI on the screen door |
-| sound, print | background | Services only (speakers / printer doors) |
+| firefox | window | Opens on the screen door. May use sound and network |
+| sound | background | Owns the speakers. No window |
+| network | background | Owns the way out. Resolves names for boxes with that door |
 
 In the Boxes window: **Home** returns to the control UI; tabs switch open window boxes. **Shut down floor** powers off the machine.
 
@@ -73,4 +88,4 @@ python3 manager/check-templates.py
 
 ## Door meaning
 
-The screen box owns the display. The sound box owns the speakers. The print box owns the printer. Other boxes reach those only through doors listed in `share/doors.json`.
+The screen box owns the display. The sound box owns the speakers. The network box owns the way out. Other boxes reach those only through doors listed in `share/doors.json`.

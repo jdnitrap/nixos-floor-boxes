@@ -12,45 +12,21 @@
       "window": false,
       "service": "pipewire"
     },
-    "print": {
-      "template": "print.nix",
-      "owns": "printer",
-      "address": { "host": "10.233.3.1", "local": "10.233.3.2" },
+    "network": {
+      "template": "network.nix",
+      "owns": "internet",
+      "address": { "host": "10.233.8.1", "local": "10.233.8.2" },
       "doors": [],
       "window": false,
-      "service": "cups"
+      "service": "dnsmasq"
     },
     "firefox": {
       "template": "firefox.nix",
       "owns": "",
       "address": { "host": "10.233.4.1", "local": "10.233.4.2" },
-      "doors": ["screen", "sound", "print"],
+      "doors": ["screen", "sound", "network"],
       "window": true,
       "service": "floor-firefox"
-    },
-    "files": {
-      "template": "files.nix",
-      "owns": "files",
-      "address": { "host": "10.233.5.1", "local": "10.233.5.2" },
-      "doors": ["screen"],
-      "window": true,
-      "service": "floor-files"
-    },
-    "mail": {
-      "template": "mail.nix",
-      "owns": "",
-      "address": { "host": "10.233.6.1", "local": "10.233.6.2" },
-      "doors": ["screen"],
-      "window": true,
-      "service": "floor-mail"
-    },
-    "photos": {
-      "template": "photos.nix",
-      "owns": "",
-      "address": { "host": "10.233.7.1", "local": "10.233.7.2" },
-      "doors": ["screen", "print"],
-      "window": true,
-      "service": "floor-photos"
     }
   }
 }

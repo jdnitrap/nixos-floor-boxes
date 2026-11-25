@@ -1,6 +1,7 @@
 # Local practice VM (not part of the installable flake)
 floor-vm.qcow2
 floor-vm-serial.log
+vm-output/
 vm-configuration.nix
 result
 result-*

@@ -5,5 +5,6 @@
     ./policy.nix
     ./door.nix
     ./screen.nix
+    ./job-boxes.nix
   ];
 }

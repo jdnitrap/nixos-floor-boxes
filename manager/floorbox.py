@@ -17,7 +17,7 @@ SOURCE_DOORS = ROOT / "share" / "doors.json"
 ACTIVE_DOORS = Path("/etc/floor-boxes/doors.json")
 SPIN = Path(__file__).with_name("spin.py")
 FLOOR_DOOR = Path("/run/floor-boxes/door/door.sock")
-DOOR_CHOICES = ("screen", "sound", "print")
+DOOR_CHOICES = ("screen", "sound", "print", "network")
 
 # How to find each box's window on the shared Wayland screen.
 # wlrctl: same attribute listed twice means "match any of these values".

@@ -5,10 +5,11 @@ let
   policyFile = ../share/doors.json;
   policy = builtins.fromJSON (builtins.readFile policyFile);
   boxes = policy.boxes;
-  knownDoors = [ "screen" "sound" "print" ];
+  knownDoors = [ "screen" "sound" "print" "network" ];
   doorPort = {
     sound = 4713;
     print = 631;
+    network = 53;
   };
 
   badDoors = lib.concatLists (lib.mapAttrsToList (name: box:
@@ -18,6 +19,10 @@ let
   acceptRules = lib.concatLists (lib.mapAttrsToList (name: box:
     lib.concatMap (door:
       if door == "screen" then [ ]
+      else if door == "network" then [
+        "iptables -A FLOOR-DOORS -s ${box.address.local} -j ACCEPT"
+        "iptables -t nat -A POSTROUTING -s ${box.address.local} -j MASQUERADE"
+      ]
       else [
         "iptables -A FLOOR-DOORS -s ${box.address.local} -d ${boxes.${door}.address.local} -p tcp --dport ${toString doorPort.${door}} -j ACCEPT"
       ]

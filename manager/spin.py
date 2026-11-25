@@ -17,7 +17,7 @@ ACTIVE_DOORS = Path("/etc/floor-boxes/doors.json")
 SOURCE_DOORS = Path("/etc/floor-boxes/doors.json")
 if not SOURCE_DOORS.exists():
     SOURCE_DOORS = ROOT / "share" / "doors.json"
-KNOWN_DOORS = ("screen", "sound", "print")
+KNOWN_DOORS = ("screen", "sound", "print", "network")
 
 
 def load_policy(path):
@@ -116,16 +116,13 @@ def start(policy, name):
         return 1
     conf = CONF_DIR / f"{name}.conf"
     if conf.exists():
-        code = update(policy, name)
-        if code != 0:
-            return code
+        # The box was built with the floor. Start it again. Do not rebuild it.
+        if os.access(conf, os.W_OK):
+            write_flags(name, box_flags(policy, name))
     else:
         code = create(policy, name)
         if code != 0:
             return code
-    if conf.exists():
-        write_flags(name, box_flags(policy, name))
-    else:
         print("Doors for this start: " + " ".join(box_flags(policy, name)))
     # Restart when already up so a new template service (like Firefox) actually runs.
     if container_active(name):

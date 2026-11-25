@@ -2,9 +2,14 @@
 # Self-contained (no imports): nixos-container evaluates this as a single file.
 { pkgs, lib, ... }:
 let
-  welcome = pkgs.runCommand "photos-welcome" { } ''
-    mkdir -p $out
+  welcome = pkgs.runCommand "photos-welcome" {
+    FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; };
+  } ''
+    mkdir -p "$out" "$TMPDIR/fontconfig"
+    export HOME="$TMPDIR"
+    export XDG_CACHE_HOME="$TMPDIR/fontconfig"
     ${pkgs.imagemagick}/bin/magick -size 800x500 xc:'#2b4055' \
+      -font ${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf \
       -gravity center -fill white -pointsize 36 -annotate 0 'Photos box' \
       "$out/welcome.png"
   '';
